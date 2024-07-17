@@ -1,2 +1,3 @@
 # memoapp
-learn React Native
+
+For learning React Native.

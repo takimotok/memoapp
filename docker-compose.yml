@@ -1,0 +1,17 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+      target: dev
+    container_name: node_app
+    ports:
+      - "33000:3000"
+    # to avoid "PID 1" problem
+    init: true
+    volumes:
+      - "./app:/home/node/app"
+    env_file:
+      - .env.local
+    tty: true
+    # command: npm run start:dev
