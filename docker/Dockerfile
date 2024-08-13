@@ -1,46 +1,101 @@
-# base
 # -----
-FROM node:20.15-alpine3.19 as base
+# base image
+# -----
+FROM node:22-bookworm-slim AS base
 
-ENV LANG=ja_JP.UTF-8
-ENV TZ=Asia/Tokyo
 ENV HOME=/home/node
-ENV APP_HOME=$HOME/app
+WORKDIR ${HOME}
 
-WORKDIR $APP_HOME
+# set our node env., either `development` or `production`
+ARG NODE_ENV=production
+ENV NODE_ENV=$NODE_ENV
 
-EXPOSE 3000
-
-# curl: for checking APIs in local dev. env.
-# git: for watch mode in Jest
-RUN apk upgrade --no-cache && \
-    apk add --update --no-cache \
-    bash \
-    curl \
-    git \
-    vim
-
-# set npm to install dependencies globally
+# install global packages
 # cf.) BestPractices.md
 # https://github.com/nodejs/docker-node/blob/main/docs/BestPractices.md#global-npm-dependencies
-ENV NPM_CONFIG_PREFIX=/home/node/.npm-global
-ENV PATH=$PATH:/home/node/.npm-global/bin
+ENV NPM_CONFIG_PREFIX=${HOME}/.npm-global
+ENV PATH=${HOME}/.npm-global/bin:$PATH
+RUN npm i --unsafe-perm --allow-root -g npm@latest
 
-COPY package*.json ./
+# -----
+# install image
+#
+# install dependencies into temp directory
+# this will cache them and speed up future builds
+# -----
+FROM ubuntu:noble-20240605 AS install
 
-# for PoLP
-# https://github.com/nodejs/docker-node/blob/main/docs/BestPractices.md#non-root-user
-RUN chown -R node:node .
+# get node.js
+COPY --from=base /usr/local/include/ /usr/local/include/
+COPY --from=base /usr/local/lib/ /usr/local/lib/
+COPY --from=base /usr/local/bin/ /usr/local/bin/
+
+ENV NODE_ENV=development
+ENV WORK_DIR=/app
+ENV PATH=${WORK_DIR}/node_modules/.bin:$PATH
+ENV LANG=ja_JP.UTF-8
+ENV TZ=Asia/Tokyo
+
+WORKDIR ${WORK_DIR}
+
+# Packages:
+#   - curl: for checking APIs in local dev. env.
+#   - git: for watch mode in Jest
+#   - tini: avoid running node.js process as PID 1
+#   - vim: for editing inside container
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    curl \
+    git \
+    tini \
+    vim \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# reset symlinks
+RUN corepack disable && corepack enable
+
+# create node user and group, then create app dir
+RUN groupadd --gid 2000 node \
+    && useradd --uid 2000 --gid node --shell /bin/bash --create-home node \
+    && mkdir -p ${WORK_DIR} \
+    && chown -R node:node ${WORK_DIR}
+
 USER node
 
-RUN echo "WORKDIR is $WORKDIR" && \
-    echo "HOME is $HOME" && \
-    echo "LANG is $LANG" && \
-    npm config list
-
-# dev
 # -----
-FROM base as dev
+# dev. image
+# -----
+FROM install AS dev
+COPY --chown=node:node ./src/package*.json ./src/yarn*.lock .
 ENV NODE_ENV=development
 
-# RUN npm ci
+# set yarn AS v4.x
+RUN yarn set version stable
+
+RUN yarn install \
+  && yarn cache clean --all
+
+# ENTRYPOINT ["/usr/bin/tini", "--"]
+
+# -----
+# prod. image
+# -----
+FROM install AS release
+COPY --chown=node:node ./src/package*.json ./src/yarn*.lock .
+ENV NODE_ENV=production
+
+# default port for node.js: 19006
+# test ports for debugging: 19001, 19002
+ARG PORT=19006
+ENV PORT ${PORT}
+EXPOSE ${PORT} 19001 19002
+
+# set yarn AS v4.x
+RUN yarn set version stable
+
+RUN yarn install \
+  && yarn cache clean --all
+
+# ENTRYPOINT ["/usr/bin/tini", "--"]
+
