@@ -6,13 +6,18 @@ services:
       dockerfile: ./docker/Dockerfile
       target: release
     container_name: memoapp
-    ports:
-      - "19001:9001"
-      - "19002:9002"
-      - "19006:9006"
+    # ports:
+    #   - "19001:9001"
+    #   - "19002:9002"
+    #   - "19006:9006"
     # to avoid "PID 1" problem
     init: true
     volumes:
       - "./src:/app"
+    environment:
+      # ifconfig | grep "192"
+      - REACT_NATIVE_PACKAGER_HOSTNAME=192.168.2.152
+    ports:
+      - 8000-8100:8000-8100
     tty: true
-    # command: npm run start:de/usr/src/appv
+    command: yarn start

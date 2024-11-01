@@ -67,7 +67,7 @@ USER node
 # dev. image
 # -----
 FROM install AS dev
-COPY --chown=node:node ./src/package*.json ./src/yarn*.lock .
+COPY --chown=node:node ./src/package*.json ./src/yarn*.lock ./
 ENV NODE_ENV=development
 
 # set yarn AS v4.x
@@ -82,14 +82,14 @@ RUN yarn install \
 # prod. image
 # -----
 FROM install AS release
-COPY --chown=node:node ./src/package*.json ./src/yarn*.lock .
+COPY --chown=node:node ./src/package*.json ./src/yarn*.lock ./
 ENV NODE_ENV=production
 
 # default port for node.js: 19006
 # test ports for debugging: 19001, 19002
-ARG PORT=19006
-ENV PORT ${PORT}
-EXPOSE ${PORT} 19001 19002
+# ARG PORT=19006
+# ENV PORT ${PORT}
+# EXPOSE ${PORT} 19001 19002
 
 # set yarn AS v4.x
 RUN yarn set version stable
