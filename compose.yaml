@@ -6,18 +6,12 @@ services:
       dockerfile: ./docker/Dockerfile
       target: release
     container_name: memoapp
-    # ports:
-    #   - "19001:9001"
-    #   - "19002:9002"
-    #   - "19006:9006"
     # to avoid "PID 1" problem
     init: true
     volumes:
       - "./src:/app"
     environment:
-      # ifconfig | grep "192"
-      - REACT_NATIVE_PACKAGER_HOSTNAME=192.168.2.152
+      - REACT_NATIVE_PACKAGER_HOSTNAME=${LOCAL_IP_ADDR}
     ports:
-      - 8000-8100:8000-8100
+      - 19000-19002:19000-19002
     tty: true
-    command: yarn start
