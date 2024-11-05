@@ -36,10 +36,14 @@ yarn-error.*
 *.pem
 
 # local env files
-.env*.local
+.env*.*
+.env
 
 # typescript
 *.tsbuildinfo
 
 # editor
 .idea
+
+# misc
+**/.mise.toml

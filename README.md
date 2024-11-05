@@ -22,10 +22,22 @@ Docker Compose version v2.26.1-desktop.1
 
 ## Usage
 
-```sh
-$ docker-compose up -d
+To get access from outside to a Expo dev. server,  
+run the `.sh` file as follow before executing `$ docker compose up -d`.
 
-$ docker-compose exec app /bin/bash
+```sh
+$ touch .env 
+
+$ chmod +x ./set_local_ip_address_to_env.sh
+$ sh ./set_local_ip_address_to_env.sh
+
+```
+
+
+```sh
+$ docker compose up -d
+
+$ docker compose exec app /bin/bash
 
 # inside docker container
 $ yarn install
