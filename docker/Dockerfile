@@ -59,9 +59,9 @@ RUN yarn set version stable \
 FROM ubuntu:noble-20240605 AS development
 
 # copy Node.js from base image
-copy --from=base /usr/local/include/ /usr/local/include/
-copy --from=base /usr/local/lib/ /usr/local/lib/
-copy --from=base /usr/local/bin/ /usr/local/bin/
+COPY --from=base /usr/local/include/ /usr/local/include/
+COPY --from=base /usr/local/lib/ /usr/local/lib/
+COPY --from=base /usr/local/bin/ /usr/local/bin/
 
 # ARGs to receive build-time variables
 #
