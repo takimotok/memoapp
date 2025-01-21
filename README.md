@@ -33,12 +33,15 @@ $ sh ./set_local_ip_address_to_env.sh
 
 ```
 
+Run commands below before the containers up.
+
+```sh
+$ yarn install
+```
+
+Run containers.
 
 ```sh
 $ docker compose up -d
 
-$ docker compose exec app /bin/bash
-
-# inside docker container
-$ yarn install
 ```
