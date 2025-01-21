@@ -10,10 +10,10 @@
     "yarn": "4.4.0"
   },
   "scripts": {
-    "start": "expo start -p 19000 --tunnel",
-    "android": "expo start -p 19000 --android --tunnel",
-    "ios": "expo start -p 19000 --ios --tunnel",
-    "web": "expo start -p 19000 --web --tunnel"
+    "start": "expo start -p 19001 --tunnel",
+    "android": "expo start -p 19001 --android --tunnel",
+    "ios": "expo start -p 19001 --ios --tunnel",
+    "web": "expo start -p 19001 --web --tunnel"
   },
   "dependencies": {
     "@expo/metro-runtime": "~3.2.3",

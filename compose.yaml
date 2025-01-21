@@ -1,17 +1,25 @@
 name: memoapp
 services:
   app:
+    platform: ${PLATFORM}
     build:
       context: .
       dockerfile: ./docker/Dockerfile
-      target: release
+      args:
+        - WORK_DIR=${WORK_DIR}
+        - PORT=${PORT}
+        - NODE_ENV=${NODE_ENV}
     container_name: memoapp
     # to avoid "PID 1" problem
     init: true
+    tty: true
     volumes:
-      - "./src:/app"
+      - ./src:/${WORK_DIR}:delegated
+      - ${WORK_DIR}/node_modules
+      - ${WORK_DIR}/.yarn
+      - ${WORK_DIR}/.cache
+    ports:
+      - ${PORT_RANGE}:${PORT_RANGE}
     environment:
       - REACT_NATIVE_PACKAGER_HOSTNAME=${LOCAL_IP_ADDR}
-    ports:
-      - 19000-19002:19000-19002
-    tty: true
+      - NODE_ENV=${NODE_ENV}
