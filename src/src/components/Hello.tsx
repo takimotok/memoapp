@@ -1,9 +1,14 @@
 import { StyleSheet, Text, View } from 'react-native'
 
-const Hello = (): JSX.Element => {
+interface Props {
+  children: string
+}
+
+const Hello = (props: Props): JSX.Element => {
+  const { children } = props
   return (
     <View>
-      <Text style={styles.text}>Hello, World!</Text>
+      <Text style={styles.text}>{children}</Text>
     </View>
   )
 }
