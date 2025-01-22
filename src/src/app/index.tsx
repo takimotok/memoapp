@@ -1,6 +1,6 @@
 import { Text, View } from 'react-native'
 
-const index = (): JSX.Element => {
+const Index = (): JSX.Element => {
   return (
     <View>
       <Text>Hellow World!</Text>
@@ -8,4 +8,4 @@ const index = (): JSX.Element => {
   )
 }
 
-export default index
+export default Index
