@@ -1,4 +1,3 @@
-// import { Feather } from '@expo/vector-icons'
 import { StyleSheet, View } from 'react-native'
 
 import CircleButton from '@/components/CircleButton'
@@ -17,7 +16,7 @@ const Index = (): JSX.Element => {
       <MemoListItem />
 
       <CircleButton>
-        <Icon />
+        <Icon name='plus' size={40} color='#FFFFFF' />
       </CircleButton>
     </View>
   )
